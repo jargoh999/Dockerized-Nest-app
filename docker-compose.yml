@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   nestjs-app:
-    image: jargoh999/nest_crud_app:latest
+    image: jargoh999/nest_crud_app_1:latest
     ports:
       - "3000:3000"
     depends_on:
