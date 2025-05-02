@@ -28,7 +28,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t jargoh999/nest_crud_app:latest .
+        run: docker build -t jargoh999/nest_crud:latest .
 
       - name: Push Docker image to Docker Hub
-        run: docker push jargoh999/nest_crud_app:latest
+        run: docker push jargoh999/nest_crud:latest
