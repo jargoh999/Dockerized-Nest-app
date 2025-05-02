@@ -14,8 +14,7 @@ services:
       - POSTGRES_NAME=nest_crud
 
   postgres:
-    image: postgres:latest
-    
+    image: postgres:13-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -24,12 +23,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - postgres-stats:/var/lib/postgresql/data/pg_stat_tmp
     tmpfs:
       - /var/lib/postgresql/data/pg_stat_tmp:mode=755,uid=999,gid=999
 
 volumes:
   postgres-data:
-  postgres-stats:
-
-
