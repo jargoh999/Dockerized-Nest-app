@@ -1,20 +1,10 @@
 version: '3.8'
-services:
-  nestjs-app:
-    image: jargoh999/nest_crud:latest
-    ports:
-      - "3000:3000"
-    depends_on:
-      - postgres
-    environment:
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_NAME=nest_crud
 
+services:
   postgres:
-    image: postgres:13-alpine
+    image: postgres:15-alpine
+    container_name: postgres_db
+    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -23,8 +13,38 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    tmpfs:
-      - /var/lib/postgresql/data/pg_stat_tmp:mode=755,uid=999,gid=999
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d nest_crud"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    networks:
+      - app-network
+
+  nestjs-app:
+    image: jargoh999/nest_crud:latest
+    container_name: nestjs_app
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nest_crud
+      DATABASE_SYNCHRONIZE: true
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
 
 volumes:
   postgres-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
